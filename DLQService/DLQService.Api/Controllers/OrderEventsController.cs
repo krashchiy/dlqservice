@@ -11,7 +11,8 @@ namespace DLQService.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderEvent>>> GetAll(CancellationToken cancellationToken)
         {
-            var events = await dbContext.OrderEvents.ToListAsync(cancellationToken);
+            var events = await dbContext.OrderEvents.OrderByDescending(x => x.CreatedAt)
+                .ToListAsync(cancellationToken);
             return Ok(events);
         }
     }

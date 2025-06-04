@@ -18,7 +18,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.4" />
   </ItemGroup>
-
+	<ItemGroup>
+		<None Update="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GrpcExtensions\GrpcExtensions.csproj" />
   </ItemGroup>
