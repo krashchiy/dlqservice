@@ -29,7 +29,8 @@ namespace DLQService.Api.Handlers
                 InvoiceId = eventData.InvoiceId,
                 OrderNumber = eventData.OrderNumber,
                 CustomerId = eventData.CustomerId,
-                IsPaid = eventData.IsPaid
+                IsPaid = eventData.IsPaid,
+                CreatedAt = DateTime.UtcNow
             };
 
             // Store in database

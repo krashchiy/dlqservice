@@ -7,6 +7,6 @@ namespace DLQService.Api.Data
     {
         [Key]
         public int Id { get; set; }
-        public DateTime CreatedAt => DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
     }
 }
