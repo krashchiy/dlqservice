@@ -1,5 +1,8 @@
-﻿using Aapc.Eventing.Abstractions.Messages;
+﻿using Aapc.Eventing.Abstractions.Handlers;
+using Aapc.Eventing.Abstractions.Messages;
+using Aapc.Shopping.ApiModel.Events;
 using DLQService.Api.Data;
+using OrderEvent = DLQService.Api.Data.OrderEvent;
 
 namespace DLQService.Api.Handlers
 {
@@ -7,21 +10,18 @@ namespace DLQService.Api.Handlers
     /// Order event handler for messaging
     /// </summary>
     /// <param name="logger"></param>
-    public class OrderEventHandler(ILogger<OrderEventHandler> logger, QueueDbContext dbContext) : EventHandlerBase<OrderCreatedEvent>(logger)
+    /// <param name="dbContext"></param>
+    public class DistanceLearningDeadLetterHandler(ILogger<DistanceLearningDeadLetterHandler> logger, QueueDbContext dbContext) : EventHandlerBase<OrderCreatedEvent>(logger)
     {
         public override string Source => "https://shopping.aapc.com";
-        public override string MessageType => "Aapc.Shopping.ApiModel.Events.OrderCreatedEvent";
+        public override string MessageType => typeof(OrderCreatedEvent).FullName;
 
         protected override async Task<MessageProcessingResult> ProcessEventAsync(
             OrderCreatedEvent eventData,
             CancellationToken cancellationToken
         )
         {
-            logger.LogInformation(
-                "Received order OrderNumber: {OrderNumber} InvoiceId: {InvoiceId}",
-                eventData.OrderNumber,
-            eventData.InvoiceId
-            );
+            logger.LogInformation("DistanceLearning DLQ Received OrderNumber: {OrderNumber} InvoiceId: {InvoiceId}", eventData.OrderNumber, eventData.InvoiceId);
 
             //use QueueDbContext to store the eventData in database
             var orderEntity = new OrderEvent
@@ -38,19 +38,9 @@ namespace DLQService.Api.Handlers
             await dbContext.SaveChangesAsync(cancellationToken);
 
 
-            logger.LogInformation(
-                "OrderNumber: {OrderNumber} successfully processed",
-                eventData.OrderNumber
-            );
+            logger.LogInformation("DistanceLearning DLQ OrderNumber: {OrderNumber} successfully processed", eventData.OrderNumber);
             return await Task.FromResult(MessageProcessingResult.Succeeded());
         }
     }
 
-    public class OrderCreatedEvent
-    {
-        public Guid InvoiceId { get; set; }
-        public int OrderNumber { get; set; }
-        public int CustomerId { get; set; }
-        public bool IsPaid { get; set; }
-    }
 }

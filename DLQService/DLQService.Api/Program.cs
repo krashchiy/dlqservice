@@ -5,6 +5,7 @@ using Aapc.Eventing.Aws;
 using Aapc.Eventing.Aws.DependencyInjection;
 using DLQService.Api.Data;
 using DLQService.Api.Handlers;
+using Aapc.Eventing.Abstractions.Handlers;
 
 namespace DLQService.Api
 {
@@ -62,24 +63,8 @@ namespace DLQService.Api
         private static void AddEventingServices(IServiceCollection services, IConfiguration configuration)
         {
             const string serviceName = "DLQServiceConfig";
-            MessagingConfiguration messagingConfig =
-                configuration
-                    .GetSection($"{serviceName}:AWS:MessagingConfiguration")
-                    .Get<MessagingConfiguration>() ?? new MessagingConfiguration();
-
-            if (messagingConfig.IsEnabled)
-            {
-                services.AddAapcAwsEventing(
-                    serviceName,
-                    configuration
-                );
-                services.AddScoped<OrderEventHandler>();
-                services.AddHostedService<EventConsumerService>();
-            }
-            else
-            {
-                services.AddSingleton<IMessageProducer, DummyMessageProducer>();
-            }
+            services.AddScoped<IMessageHandler, DistanceLearningDeadLetterHandler>();
+            services.AddAapcAwsEventing(serviceName, configuration);
         }
     }
 }
