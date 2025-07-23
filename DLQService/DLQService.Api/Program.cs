@@ -1,4 +1,3 @@
-using GrpcExtensions;
 using Microsoft.EntityFrameworkCore;
 using Aapc.Eventing.Abstractions.Producer;
 using Aapc.Eventing.Aws;
@@ -32,9 +31,7 @@ namespace DLQService.Api
             services.AddOpenApi();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddDbContext<QueueDbContext>(options =>
-                options.UseSqlite("Data Source=shoppingmessages.db"));
-            services.AddGrpcService();
+            services.AddDbContext<QueueDbContext>(options => options.UseSqlite("Data Source=shoppingmessages.db"));
             AddEventingServices(services, configuration);
         }
 
